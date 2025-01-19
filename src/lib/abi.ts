@@ -1,6 +1,13 @@
 export const NFTCollectionABI = [
   {
     type: "function",
+    name: "name",
+    inputs: [],
+    outputs: [{ type: "string" }],
+    stateMutability: "view"
+  },
+  {
+    type: "function",
     name: "totalSupply",
     inputs: [],
     outputs: [{ type: "uint256" }],

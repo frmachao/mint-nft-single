@@ -39,6 +39,11 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
       {
         address: contractAddress,
         abi: NFTCollectionABI,
+        functionName: "name",
+      },
+      {
+        address: contractAddress,
+        abi: NFTCollectionABI,
         functionName: "maxSupply",
       },
       {
@@ -82,6 +87,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
   });
 
   const [
+    name,
     maxSupply,
     description,
     imageUrl,
@@ -169,7 +175,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
           </Dialog>
         </div>
         <CardTitle className="mt-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
-          NFT Collection
+          {name as string}
         </CardTitle>
         {!!description && (
           <CardDescription className="text-neutral-400">
