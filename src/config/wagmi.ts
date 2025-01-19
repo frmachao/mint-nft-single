@@ -2,6 +2,16 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { http } from 'viem'
 import { sepolia } from 'viem/chains'
 import { QueryClient } from '@tanstack/react-query'
+import {
+    metaMaskWallet,
+    okxWallet,
+    oneKeyWallet,
+    bitgetWallet,
+    trustWallet,
+    coinbaseWallet,
+    binanceWallet,
+    walletConnectWallet,
+  } from '@rainbow-me/rainbowkit/wallets'
 
 export const queryClient = new QueryClient()
 
@@ -13,4 +23,19 @@ export const wagmiConfig = getDefaultConfig({
     [sepolia.id]: http(),
   },
   ssr: false,
+  wallets: [
+    {
+      groupName: 'Popular',
+      wallets: [
+        metaMaskWallet,
+        okxWallet,
+        oneKeyWallet,
+        bitgetWallet,
+        trustWallet,
+        coinbaseWallet,
+        binanceWallet,
+        walletConnectWallet,
+      ]
+    }
+  ],
 }) 

@@ -75,7 +75,6 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
   } = useWaitForTransactionReceipt({
     hash: hash as `0x${string}`,
   });
-  // 重新获取 totalSupply
   const { data: totalSupply, refetch: refetchTotalSupply } = useReadContract({
     address: contractAddress,
     abi: NFTCollectionABI,
