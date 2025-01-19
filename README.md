@@ -2,7 +2,6 @@
 
 A modern and elegant NFT minting application built with React, Vite, and Web3 technologies.
 
-![NFT Mint DApp Screenshot](./assets/screenshot.png)
 
 ## Features
 
