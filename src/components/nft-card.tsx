@@ -30,7 +30,7 @@ interface NFTCardProps {
 
 export function NFTCard({ contractAddress }: NFTCardProps) {
   const { isConnected } = useAccount();
-  const { writeContract, isPending, data: hash } = useWriteContract();
+  const { writeContract, isPending, data: hash,isError:isWriteError } = useWriteContract();
   const [mintPeriod, setMintPeriod] = useState<string>("");
   const { toast } = useToast()
 
@@ -74,7 +74,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
     ],
   });
   const {
-    isLoading: isConfirming,
+    isLoading: isMinting,
     isSuccess,
     isError: isMintError,
   } = useWaitForTransactionReceipt({
@@ -105,11 +105,11 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
       value: mintPrice as bigint,
     });
   };
-  const isDisabled = !isConnected || isPending || isConfirming;
+  const isDisabled = !isConnected || isPending || isMinting;
   const getButtonText = () => {
     if (!isConnected) return "Connect Wallet";
-    if (!isPending) return "Confirming...";
-    if (isConfirming) return "Minting...";
+    if (isPending) return "Confirming...";
+    if (isMinting) return "Minting...";
     return "Mint NFT";
   };
 
@@ -134,13 +134,14 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
         description: "You have successfully minted an NFT",
       });
     }
-    if (isMintError) {
+    if (isMintError || isWriteError) {
       toast({
         title: "Mint Error",
         description: "Mint failed, please try again",
+        variant: "destructive",
       });
     }
-  }, [isSuccess, refetchTotalSupply, isMintError]);
+  }, [isSuccess, refetchTotalSupply, isMintError, isWriteError]);
 
   if (isLoading) {
     return <NFTCardLoading contractAddress={contractAddress} />;
