@@ -108,7 +108,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
   const isDisabled = !isConnected || isPending || isConfirming;
   const getButtonText = () => {
     if (!isConnected) return "Connect Wallet";
-    if (isConfirming) return "Confirming...";
+    if (!isPending) return "Confirming...";
     if (isConfirming) return "Minting...";
     return "Mint NFT";
   };
