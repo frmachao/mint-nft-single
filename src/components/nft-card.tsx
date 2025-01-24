@@ -97,7 +97,6 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
   ] = data?.map((result) => result.result) ?? [];
 
   const handleMint = async () => {
-    if (!mintPrice) return;
     writeContract({
       address: contractAddress,
       abi: NFTCollectionABI,
