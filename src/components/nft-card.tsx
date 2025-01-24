@@ -23,6 +23,7 @@ import { formatEther } from "viem";
 import { useEffect, useState } from "react";
 import { NFTCardLoading } from "./nft-card-loading";
 import { useToast } from "@/hooks/use-toast"
+import dayjs from 'dayjs'
 
 interface NFTCardProps {
   contractAddress: `0x${string}`;
@@ -119,9 +120,9 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
       Number(mintStartTime) > 0 &&
       Number(mintEndTime) > 0
     ) {
-      const start = new Date(Number(mintStartTime) * 1000).toLocaleDateString();
-      const end = new Date(Number(mintEndTime) * 1000).toLocaleDateString();
-      setMintPeriod(`${start} - ${end}`);
+      const start = dayjs(Number(mintStartTime) * 1000).format('YYYY-MM-DD HH:mm');
+      const end = dayjs(Number(mintEndTime) * 1000).format('YYYY-MM-DD HH:mm');
+      setMintPeriod(`${start}\n${end}`);
     }
   }, [mintStartTime, mintEndTime]);
 
@@ -195,9 +196,15 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
             </div>
           )}
           {mintPeriod && (
-            <div className="flex items-center gap-2 text-sm text-neutral-400">
-              <Clock className="w-4 h-4" />
-              <span>Mint Period: {mintPeriod}</span>
+            <div className="flex flex-col gap-1 text-sm text-neutral-400">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                <span>Mint Period</span>
+              </div>
+              <div className="pl-6 space-y-1">
+                <div>Start: {mintPeriod.split('\n')[0]}</div>
+                <div>End: {mintPeriod.split('\n')[1]}</div>
+              </div>
             </div>
           )}
           <div className="space-y-2">
