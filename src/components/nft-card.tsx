@@ -21,7 +21,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Expand, Clock } from "lucide-react";
 import { NFTCollectionABI } from "@/lib/abi";
 import { formatEther } from "viem";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { NFTCardLoading } from "./nft-card-loading";
 import { useToast } from "@/hooks/use-toast"
 import dayjs from 'dayjs'
@@ -32,7 +32,7 @@ interface NFTCardProps {
 }
 
 export function NFTCard({ contractAddress }: NFTCardProps) {
-  const { isConnected } = useAccount();
+  const { isConnected, address: userAddress } = useAccount();
   const { writeContract, isPending, data: hash,isError:isWriteError } = useWriteContract();
   const [mintPeriod, setMintPeriod] = useState<string>("");
   const { toast } = useToast()
@@ -75,6 +75,22 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
         abi: NFTCollectionABI,
         functionName: "mintEndTime",
       },
+      {
+        address: contractAddress as `0x${string}`,
+        abi: NFTCollectionABI,
+        functionName: "paused",
+      },
+      {
+        address: contractAddress as `0x${string}`,
+        abi: NFTCollectionABI,
+        functionName: "whitelistOnly",
+      },
+      {
+        address: contractAddress as `0x${string}`,
+        abi: NFTCollectionABI,
+        functionName: "whitelist",
+        args: [userAddress as `0x${string}`],
+      },
     ],
   });
   const {
@@ -98,7 +114,11 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
     mintPrice,
     mintStartTime,
     mintEndTime,
+    paused,
+    whitelistOnly,
+    userIsWhitelisted,
   ] = data?.map((result) => result.result) ?? [];
+
 
   const handleMint = async () => {
     writeContract({
@@ -108,11 +128,67 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
       value: mintPrice as bigint,
     });
   };
-  const isDisabled = !isConnected || isPending || isMinting;
+
+  const isDisabled = useMemo(() => {
+    if (!isConnected || isPending || isMinting) return true;
+    
+    const now = Math.floor(Date.now() / 1000);
+    
+    if (Number(mintStartTime) > 0 && now < Number(mintStartTime)) {
+      return true;
+    }
+    
+    if (Number(mintEndTime) > 0 && now > Number(mintEndTime)) {
+      return true;
+    }
+    
+    if (paused) return true;
+    
+    if (whitelistOnly && !userIsWhitelisted) return true;
+    
+    if (totalSupply && maxSupply && Number(totalSupply) >= Number(maxSupply)) {
+      return true;
+    }
+    
+    return false;
+  }, [
+    isConnected, 
+    isPending, 
+    isMinting, 
+    mintStartTime, 
+    mintEndTime, 
+    paused, 
+    whitelistOnly, 
+    userIsWhitelisted,
+    totalSupply,
+    maxSupply
+  ]);
+
   const getButtonText = () => {
     if (!isConnected) return "Connect Wallet";
     if (isPending) return "Confirming...";
     if (isMinting) return "Minting...";
+    
+    const now = Math.floor(Date.now() / 1000);
+    
+    if (Number(mintStartTime) > 0 && now < Number(mintStartTime)) {
+      return "Mint Not Started";
+    }
+    
+    if (Number(mintEndTime) > 0 && now > Number(mintEndTime)) {
+      return "Mint Ended";
+    }
+    
+    if (paused) return "Mint Paused";
+    
+    if (whitelistOnly && !userIsWhitelisted) {
+      return "Not Whitelisted";
+    }
+    
+    if (totalSupply && maxSupply && Number(totalSupply) >= Number(maxSupply)) {
+      return "Sold Out";
+    }
+    
     return "Mint NFT";
   };
 
@@ -230,7 +306,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
             disabled={isDisabled}
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
-             {getButtonText()}
+            {getButtonText()}
           </Button>
         )}
       </CardFooter>
