@@ -195,7 +195,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
           </div>
           {!!mintPrice && Number(mintPrice) > 0 && (
             <div className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
-              Mint Price: {formatEther(mintPrice as bigint)} {getCurrencySymbol(chainId || 11155111)}
+              Mint Price: {formatEther(mintPrice as bigint)} {getCurrencySymbol(chainId || 56)}
             </div>
           )}
           {mintPeriod && (

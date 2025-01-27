@@ -12,14 +12,15 @@ interface NFTContract {
 
 function App() {
   const [contractAddresses, setContractAddresses] = useState<`0x${string}`[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
   const  chainId  = useChainId()
 
   useEffect(() => {
     const fetchNFTContracts = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/nft-mints?chainId=${chainId || 56}`)
+        setIsLoading(true)
+        const response = await fetch(`https://nft-maker-alpha.vercel.app/api/nft-mints?chainId=${chainId || 56}`)
         const data: NFTContract[] = await response.json()
         const addresses = data.map(contract => contract.address as `0x${string}`)
         setContractAddresses(addresses)
