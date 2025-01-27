@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { NFTCard } from "@/components/nft-card"
 import { useToast } from "@/hooks/use-toast"
-
+import { useChainId } from 'wagmi'
 interface NFTContract {
   id: string
   address: `0x${string}`
@@ -14,11 +14,12 @@ function App() {
   const [contractAddresses, setContractAddresses] = useState<`0x${string}`[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
+  const  chainId  = useChainId()
 
   useEffect(() => {
     const fetchNFTContracts = async () => {
       try {
-        const response = await fetch('https://nft-maker-alpha.vercel.app/api/nft-mints')
+        const response = await fetch(`http://localhost:3000/api/nft-mints?chainId=${chainId || 56}`)
         const data: NFTContract[] = await response.json()
         const addresses = data.map(contract => contract.address as `0x${string}`)
         setContractAddresses(addresses)
@@ -36,7 +37,7 @@ function App() {
     }
 
     fetchNFTContracts()
-  }, [toast])
+  }, [chainId, toast])
 
   if (isLoading) {
     return (

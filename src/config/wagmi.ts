@@ -1,6 +1,6 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { http } from 'viem'
-import { sepolia } from 'viem/chains'
+import { sepolia, bsc } from 'viem/chains'
 import { QueryClient } from '@tanstack/react-query'
 import {
     metaMaskWallet,
@@ -18,8 +18,9 @@ export const queryClient = new QueryClient()
 export const wagmiConfig = getDefaultConfig({
   appName: 'NFT Mint DApp',
   projectId: import.meta.env.VITE_PUBLIC_WALLET_CONNECT_PROJECT_ID,
-  chains: [sepolia],
+  chains: [bsc, sepolia],
   transports: {
+    [bsc.id]: http(),
     [sepolia.id]: http(),
   },
   ssr: false,
