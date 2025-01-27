@@ -14,7 +14,8 @@ import {
   useReadContracts,
   useWriteContract,
   useReadContract,
-  useWaitForTransactionReceipt
+  useWaitForTransactionReceipt,
+  useChainId
 } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Expand, Clock } from "lucide-react";
@@ -24,6 +25,7 @@ import { useEffect, useState } from "react";
 import { NFTCardLoading } from "./nft-card-loading";
 import { useToast } from "@/hooks/use-toast"
 import dayjs from 'dayjs'
+import { getCurrencySymbol } from '@/lib/utils'
 
 interface NFTCardProps {
   contractAddress: `0x${string}`;
@@ -34,6 +36,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
   const { writeContract, isPending, data: hash,isError:isWriteError } = useWriteContract();
   const [mintPeriod, setMintPeriod] = useState<string>("");
   const { toast } = useToast()
+  const chainId = useChainId()
 
   const { data, isLoading } = useReadContracts({
     contracts: [
@@ -192,7 +195,7 @@ export function NFTCard({ contractAddress }: NFTCardProps) {
           </div>
           {!!mintPrice && Number(mintPrice) > 0 && (
             <div className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
-              Mint Price: {formatEther(mintPrice as bigint)} ETH
+              Mint Price: {formatEther(mintPrice as bigint)} {getCurrencySymbol(chainId || 56)}
             </div>
           )}
           {mintPeriod && (
