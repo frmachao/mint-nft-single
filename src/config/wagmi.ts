@@ -20,7 +20,7 @@ export const wagmiConfig = getDefaultConfig({
   projectId: import.meta.env.VITE_PUBLIC_WALLET_CONNECT_PROJECT_ID,
   chains: [bsc, sepolia],
   transports: {
-    [bsc.id]: http(),
+    [bsc.id]: http("https://bsc-dataseed.bnbchain.org"),
     [sepolia.id]: http(),
   },
   ssr: false,
